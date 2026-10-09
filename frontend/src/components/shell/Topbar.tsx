@@ -9,6 +9,7 @@ export function Topbar({
   connection,
   latency,
   lastSync,
+  paused,
   isRefreshing,
   sourceFilter,
   onSourceFilterChange,
@@ -16,6 +17,7 @@ export function Topbar({
   onTogglePause,
   onOpenSettings,
 }: {
+  connection: ConnectionState;
   latency: number | null;
   lastSync: number | null;
   paused: boolean;
