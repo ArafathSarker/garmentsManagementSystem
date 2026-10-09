@@ -216,7 +216,7 @@ Records individual COUNT and VOID events with idempotency guarantees.
 | `source_id`       | VARCHAR      | NOT NULL, FK → production_sources                    |
 | `event_id`        | VARCHAR      | NOT NULL                                             |
 | `type`            | VARCHAR      | CHECK (COUNT \| VOID)                                |
-| `quantity`        | INTEGER      | CHECK (>0 for COUNT, NULL for VOID)                  |
+| `quantity`        | INTEGER      | CHECK (>0 and <=500 for COUNT, NULL for VOID)        |
 | `target_event_id` | VARCHAR      | References the COUNT being voided                    |
 | `event_time`      | TIMESTAMPTZ  | NOT NULL                                             |
 | `status`          | VARCHAR      | CHECK (ACCEPTED \| PENDING_REFERENCE)                |

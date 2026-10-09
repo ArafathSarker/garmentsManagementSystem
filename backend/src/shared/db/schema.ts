@@ -17,7 +17,7 @@ export const schemaQueries = [
                 event_id VARCHAR NOT NULL,
                 type VARCHAR NOT NULL CHECK (type IN ('COUNT', 'VOID')),
                 quantity INTEGER CHECK (
-                    (type = 'COUNT' AND quantity > 0) OR
+                    (type = 'COUNT' AND quantity > 0 AND quantity <= 500) OR
                     (type = 'VOID' AND quantity IS NULL)
                 ),
                 target_event_id VARCHAR,
