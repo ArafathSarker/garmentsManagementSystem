@@ -1,0 +1,7 @@
+## Technical Explanations & Assumptions
+
+1. **Unresolved vs Rejected Submissions:** In the original API state logic, the `unresolved` metric tallied attempts with `classification = 'REJECTED'`. The FSE-01 spec requested to 'Add rejected_submissions to the existing GET /api/state?view=summary response' while explicitly commanding to 'Keep all six existing summary fields unchanged.' To fulfill both constraints literally, I added the new `rejected_submissions` aggregate without modifying the behavior of the original `unresolved` aggregate. They both include `REJECTED` data, but this adheres strictly to the backward-compatibility constraint.
+
+2. **Frontend Filter Pre-existence:** The FSE-01 spec says 'Use the backend API's existing source_id filtering.' I noticed that the backend did not actually have active `source_id` filtering implemented in the `state/queries.ts` SQL commands yet. I assumed this meant the parameter was 'existing' as a concept but needed to be wired securely into the SQL logic. I implemented the SQL `WHERE` clause injection safely using PostgreSQL parameterized queries to satisfy the requirement.
+
+3. **Database Schema Constraints:** The requirement 'A single COUNT event cannot contain a quantity greater than 500' was implemented directly in the Node.js service logic. However, for maximum data integrity and strict PostgreSQL transaction safety as outlined in the assessment, I additionally codified the explicit `CHECK (quantity <= 500)` constraint natively in `backend/src/shared/db/schema.ts`.
