@@ -1,10 +1,8 @@
-import { Router } from 'express';
-
-const ackRouter = Router();
+import { Request, Response } from 'express';
 
 // POST /api/ack
 // Acknowledge processed events
-ackRouter.post('/', async (req, res) => {
+export const handleAckPost = async (req: Request, res: Response) => {
     try {
         const { event_ids } = req.body;
         
@@ -19,6 +17,4 @@ ackRouter.post('/', async (req, res) => {
         console.error("Error acknowledging events:", error);
         res.status(400).json({ error: "Invalid request payload" });
     }
-});
-
-export { ackRouter };
+};

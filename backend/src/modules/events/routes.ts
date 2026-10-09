@@ -1,10 +1,8 @@
-import { Router } from 'express';
-
-const eventsRouter = Router();
+import { Request, Response } from 'express';
 
 // POST /api/events
 // Process a batch of JSON events
-eventsRouter.post('/', async (req, res) => {
+export const handleEventsPost = async (req: Request, res: Response) => {
     try {
         // TODO: Pass to validation and service layers
         const events = req.body;
@@ -15,6 +13,4 @@ eventsRouter.post('/', async (req, res) => {
         console.error("Error processing events:", error);
         res.status(400).json({ error: "Invalid request payload" });
     }
-});
-
-export { eventsRouter };
+};

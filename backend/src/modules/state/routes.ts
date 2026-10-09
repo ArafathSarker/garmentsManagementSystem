@@ -1,10 +1,8 @@
-import { Router } from 'express';
-
-const stateRouter = Router();
+import { Request, Response } from 'express';
 
 // GET /api/state
 // Return summary totals, pending items, and unresolved exceptions
-stateRouter.get('/', async (req, res) => {
+export const handleStateGet = async (req: Request, res: Response) => {
     try {
         // TODO: Pass to queries layer to fetch from durable evidence/projections
         
@@ -25,6 +23,4 @@ stateRouter.get('/', async (req, res) => {
         console.error("Error fetching state:", error);
         res.status(500).json({ error: "Internal server error" });
     }
-});
-
-export { stateRouter };
+};

@@ -77,3 +77,17 @@ This document contains the record of AI assistance used during the candidate ass
 
 ### AI - Response 9
 *The AI verified the full conversation log was safely updated inside `AI_USAGE.md`.*
+
+### User - Prompt 10
+> now create the backend api endpoints... now check the api endpoints please I think you used app.use in the index file use that is required methos like get , put post
+
+### AI - Response 10
+*The AI resolved two major issues:*
+1. *Refactored `backend/src/app/index.ts` to directly use `app.get()` and `app.post()` to register endpoints, extracting the raw handlers from the modules, fulfilling the exact explicit requirement.*
+2. *Fixed a critical `Failed to fetch` error on the frontend. The dashboard was incorrectly attempting to fetch from `localhost:3001` (the frontend's alternate port) instead of `localhost:8080`, which was the backend's configured `.env` port. The API URL in `Dashboard.tsx` was corrected to resolve this network misfire.*
+
+### User - Prompt 11
+> now push the converstaion in the ai_usage.md
+
+### AI - Response 11
+*The AI appended the latest backend routing adjustments and port corrections into this log.*

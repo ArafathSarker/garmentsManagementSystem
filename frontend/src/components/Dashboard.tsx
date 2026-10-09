@@ -33,7 +33,7 @@ export default function Dashboard() {
       try {
         setIsLoading(true);
         // Connect to the actual backend Express server
-        const response = await fetch('http://localhost:3001/api/state');
+        const response = await fetch('http://localhost:8080/api/state');
         
         if (!response.ok) {
           throw new Error(`Failed to fetch state: ${response.statusText}`);
