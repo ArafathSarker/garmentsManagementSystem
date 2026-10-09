@@ -266,6 +266,7 @@ Health check endpoint.
 ### `POST /api/events`
 
 Process a batch of production events. Events are processed individually within isolated transactions — a rejected item does not affect valid items in the same batch.
+For `COUNT` events, the quantity must be an integer between 1 and 500 inclusive; exceeding 500 results in a `REJECTED` status.
 
 **Request Body:** `Array<Event>`
 
@@ -303,7 +304,7 @@ Possible `status` values: `ACCEPTED`, `PENDING_REFERENCE`, `DUPLICATE`, `CONFLIC
 
 ### `GET /api/state`
 
-Returns aggregated system state computed from durable evidence.
+Returns aggregated system state computed from durable evidence. Supports an optional `source_id` query parameter (e.g., `?source_id=LINE-01`) to filter the results for a specific production source.
 
 **Response:** `200 OK`
 
@@ -315,7 +316,8 @@ Returns aggregated system state computed from durable evidence.
     "pending_void": 0,
     "unresolved": 0,
     "duplicates": 0,
-    "conflicts": 1
+    "conflicts": 1,
+    "rejected_submissions": 0
   },
   "pending": [
     {

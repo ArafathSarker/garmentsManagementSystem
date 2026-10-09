@@ -118,3 +118,21 @@ This document contains the record of AI assistance used during the candidate ass
 
 ### AI - Response 12
 *The AI created a full `README.md` with architecture overview, setup instructions, API documentation, and database schema details. The `AI_USAGE.md` was updated with the complete conversation transcript.*
+
+---
+
+### User - Prompt 13
+> Now the requirement have changed intrigate this with the existing project [FSE-01 Change Request image provided].
+> The requirements include adding a production quantity validation rule (max 500), adding rejected submissions to the summary response, supporting source_id filtering in backend queries, adding a frontend production source filter, and adding a rejected submissions indicator to the dashboard.
+> Also, fix a bug related to missing Topbar props `paused` and `connection`.
+> Finally, change the documentation as requirements.
+
+### AI - Response 13
+*The AI successfully completed the FSE-01 change requests:*
+- *Added quantity validation (`>0` and `<=500`) for COUNT events in `processEventsService`, returning `REJECTED` and accurately recording in PostgreSQL when limit is exceeded.*
+- *Updated `state/queries.ts` to return `rejected_submissions` computed natively via SQL count of `submission_attempts` with `classification = 'REJECTED'`.*
+- *Added an optional `source_id` query parameter for `GET /api/state` and updated the PostgreSQL queries to handle filtering.*
+- *Built a frontend state slice and topbar input (`Topbar.tsx`) to accept a Source ID, plumbing it through to the backend state calls, allowing filtering to work seamlessly across the application.*
+- *Added the `Rejected` indicator (`StatCard`) to the Dashboard's `OverviewView` and adjusted the grid to `xl:grid-cols-5` to accommodate the 7th metric while remaining responsive.*
+- *Fixed a typescript and rendering bug in `Topbar.tsx` caused by missing `paused` and `connection` props.*
+- *Updated the `README.md` and this `AI_USAGE.md`.*
