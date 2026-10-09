@@ -58,6 +58,8 @@ export function startMqttWorker() {
 
         // Matching response format for simulator
         const responsePayload = {
+           protocol_version: payload.protocol_version || "1.0",
+           candidate_id: CANDIDATE_ID,
            challenge_id: payload.challenge_id,
            status: "PROCESSED",
            timestamp: new Date().toISOString(),

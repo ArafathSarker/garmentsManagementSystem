@@ -27,6 +27,12 @@ export async function processEventsService(events: any[]) {
             // Begin isolated transaction for this event
             await pool.query('BEGIN');
 
+            // Upsert the source_id to satisfy foreign key constraints
+            await pool.query(
+                `INSERT INTO production_sources (source_id, display_name) VALUES ($1, $1) ON CONFLICT (source_id) DO NOTHING`,
+                [source_id]
+            );
+
             // Check for existing event (Duplicate/Conflict)
             const existingQuery = await pool.query(
                 `SELECT * FROM production_events WHERE source_id = $1 AND event_id = $2`,

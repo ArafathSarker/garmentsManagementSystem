@@ -177,17 +177,40 @@ export function normalizeState(raw: unknown): StateResponse {
   };
 }
 
+/** Helper: returns true for any abort-related error. */
+function isAbortError(err: unknown): boolean {
+  if (err instanceof DOMException && err.name === "AbortError") return true;
+  if (err && typeof err === "object" && "name" in err && (err as any).name === "AbortError") return true;
+  return false;
+}
+
 export const api = {
   getState: async (signal?: AbortSignal): Promise<StateResponse> => {
-    const res = await fetch(`${API_BASE_URL}/api/state`, { cache: "no-store", signal });
-    if (!res.ok) throw new ApiError("Failed to fetch state", res.status);
-    return normalizeState(await res.json());
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/state`, { cache: "no-store", signal });
+      if (!res.ok) throw new ApiError("Failed to fetch state", res.status);
+      return normalizeState(await res.json());
+    } catch (err) {
+      // If the request was intentionally aborted (unmount / superseded poll),
+      // return a safe empty state instead of letting the rejection propagate.
+      if (isAbortError(err) || signal?.aborted) {
+        return { summary: EMPTY_SUMMARY, pending: [], exceptions: [] };
+      }
+      throw err;
+    }
   },
 
   getHealth: async (signal?: AbortSignal): Promise<HealthResponse> => {
-    const res = await fetch(`${API_BASE_URL}/health`, { cache: "no-store", signal });
-    if (!res.ok) throw new ApiError("Backend unreachable", res.status);
-    return (await res.json()) as HealthResponse;
+    try {
+      const res = await fetch(`${API_BASE_URL}/health`, { cache: "no-store", signal });
+      if (!res.ok) throw new ApiError("Backend unreachable", res.status);
+      return (await res.json()) as HealthResponse;
+    } catch (err) {
+      if (isAbortError(err) || signal?.aborted) {
+        return { status: "aborted" };
+      }
+      throw err;
+    }
   },
 
   ackEvents: (eventIds: string[]): Promise<AckResponse> =>

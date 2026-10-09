@@ -60,12 +60,10 @@ const subscribe = (listener: () => void) => {
 const getServerSnapshot = (): FactorySnapshot => snapshot;
 const getSnapshot = (): FactorySnapshot => snapshot;
 
-let inFlight: AbortController | null = null;
+let refreshGeneration = 0;
 
 async function refresh(reason: "poll" | "manual" = "poll"): Promise<void> {
-  inFlight?.abort();
-  const controller = new AbortController();
-  inFlight = controller;
+  const thisGen = ++refreshGeneration;
 
   if (reason === "manual") {
     snapshot = { ...snapshot, isRefreshing: true };
@@ -75,8 +73,11 @@ async function refresh(reason: "poll" | "manual" = "poll"): Promise<void> {
   const startedAt = performance.now();
 
   try {
-    const data = await api.getState(controller.signal);
+    const data = await api.getState();
     const latency = Math.round(performance.now() - startedAt);
+
+    // If a newer refresh was started while we were waiting, discard this result.
+    if (thisGen !== refreshGeneration) return;
 
     snapshot = {
       ...snapshot,
@@ -89,11 +90,8 @@ async function refresh(reason: "poll" | "manual" = "poll"): Promise<void> {
       history: [...snapshot.history, data.summary.net_total].slice(-HISTORY_LIMIT),
     };
   } catch (error) {
-    // An aborted request is an intentional cancellation (superseded poll, unmount,
-    // manual refresh) — never surface it as a connection failure.
-    if (controller.signal.aborted || (error instanceof DOMException && error.name === "AbortError")) {
-      return;
-    }
+    // Stale response — a newer refresh superseded this one.
+    if (thisGen !== refreshGeneration) return;
 
     const message =
       error instanceof ApiError && error.status === 0
@@ -139,7 +137,6 @@ export function useFactoryState() {
       active = false;
       clearInterval(timer);
       document.removeEventListener("visibilitychange", onVisible);
-      inFlight?.abort();
     };
   }, []);
 
