@@ -5,7 +5,8 @@
  */
 
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "http://localhost:8080";
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? 
+  (typeof window !== "undefined" ? `http://${window.location.hostname}:8080` : "http://localhost:8080");
 
 export type EventType = "COUNT" | "VOID";
 export type EventStatus = "ACCEPTED" | "PENDING_REFERENCE";

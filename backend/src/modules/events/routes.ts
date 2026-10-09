@@ -1,14 +1,18 @@
 import { Request, Response } from 'express';
+import { processEventsService } from './service.js';
 
-// POST /api/events
-// Process a batch of JSON events
 export const handleEventsPost = async (req: Request, res: Response) => {
     try {
-        // TODO: Pass to validation and service layers
         const events = req.body;
         
-        // Mock response for now to satisfy initial REST API check
-        res.status(200).json({ message: "Events received", count: Array.isArray(events) ? events.length : 0 });
+        if (!Array.isArray(events)) {
+            return res.status(400).json({ error: "Expected an array of events" });
+        }
+        
+        const results = await processEventsService(events);
+        
+        // Per spec: Return HTTP 200 when the processed JSON list arrives in exact order, even if some items are REJECTED.
+        res.status(200).json({ results });
     } catch (error) {
         console.error("Error processing events:", error);
         res.status(400).json({ error: "Invalid request payload" });

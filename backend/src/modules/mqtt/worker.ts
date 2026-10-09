@@ -1,5 +1,7 @@
 import mqtt from 'mqtt';
 import crypto from 'crypto';
+import { processEventsService } from '../events/service.js';
+import { getStateQueries } from '../state/queries.js';
 
 // Setup basic environment variables fallback if missing
 const BROKER_URL = process.env.MQTT_BROKER_URL || 'mqtt://152.42.238.142:1883';
@@ -49,16 +51,18 @@ export function startMqttWorker() {
         const payload = JSON.parse(message.toString());
         console.log(`Received challenge: ${payload.challenge_id}`);
 
-        // TODO: Pass events to the shared internal service processing logic used by REST
-        // const results = await processEventsService(payload.events);
+        const results = await processEventsService(payload.events);
         
-        // Mock response to satisfy the examiner simulator integration requirement
+        // Read state through the same query functions
+        const state = await getStateQueries();
+
+        // Matching response format for simulator
         const responsePayload = {
            challenge_id: payload.challenge_id,
            status: "PROCESSED",
            timestamp: new Date().toISOString(),
-           // TODO: include serialized result based on the processed DB state
-           results: [] 
+           results: results,
+           state: state
         };
 
         client.publish(TOPICS.response, JSON.stringify(responsePayload), { qos: 1, retain: false }, (err) => {
