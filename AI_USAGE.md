@@ -59,3 +59,21 @@ This document contains the record of AI assistance used during the candidate ass
 
 ### AI - Response 7
 *The AI fixed the Server Component restriction error by declaring `"use client";` at the top of the Next.js `page.tsx` file, ensuring the lazy loaded dashboard properly rendered on the client side without hydration mismatches. The conversation log was updated accordingly.*
+
+### User - Prompt 8
+> here see the picture and configure the mqtt protocall so that it can hanele multiple devices so well it will subscriber publiser method and save the important creadential .env and .env.example
+
+### AI - Response 8
+*The AI implemented the MQTT integration required by the simulator.*
+- *Installed the `mqtt` library in the backend.*
+- *Stored the `MQTT_BROKER_URL` and `CANDIDATE_ID` in `.env` and `.env.example` safely.*
+- *Created `src/modules/mqtt/worker.ts` configured with MQTT v5.0 and the unique Client ID format (`fse01-{candidate_id}-{short_random_suffix}`).*
+- *Implemented `subscribe()` logic for the `challenge` topic, `publish()` logic for the initial `status` heartbeat, and a handler for returning the matching `response`.*
+- *Imported the worker into `server.ts` so it launches alongside the REST API.*
+- *Appended the prompt and resolution directly to this `AI_USAGE.md` log.*
+
+### User - Prompt 9
+> now push the chat history to the aiusage.md
+
+### AI - Response 9
+*The AI verified the full conversation log was safely updated inside `AI_USAGE.md`.*
