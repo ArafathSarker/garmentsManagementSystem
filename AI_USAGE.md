@@ -31,3 +31,31 @@ This document contains the record of AI assistance used during the candidate ass
 
 ### AI - Response 3
 *The AI created this `AI_USAGE.md` file and transcribed the conversation record.*
+
+### User - Prompt 4
+> now build the frontend with nice architecture like lazy loading and if a huge amount of data will page use pagination methods and use optimization function like use memo etc and at the end of the work push the conversation in the AI_Usage.md
+
+### AI - Response 4
+*The AI accessed the Next.js frontend application and built a highly optimized, premium architecture.*
+- *Created a generic `DataTable` component utilizing `useMemo` for both complex sorting logic and client-side pagination slicing to avoid unnecessary re-renders.*
+- *Created a `Dashboard` component featuring summary metric cards and incorporating the `DataTable` with a robust mock dataset.*
+- *Refactored `src/app/page.tsx` to utilize `next/dynamic` for lazy loading the `Dashboard` component to reduce initial JavaScript payload, and implemented a visually striking Tailwind CSS design.*
+- *Appended this conversation stage into `AI_USAGE.md`.*
+
+### User - Prompt 5
+> now check the backend and initilize use a seperate route folder as mention in the pictures and make it reday for api fetch or using REST api facilities
+
+### AI - Response 5
+*The AI restructured the backend directory to follow a modular architecture (`src/modules/{events,state,ack}/routes.ts`), initialized an Express server entry point (`server.ts`), and set it up to accept REST API requests natively.*
+
+### User - Prompt 6
+> The frontend have some issues please make sure the frontend must support the backend so conffigure that way
+
+### AI - Response 6
+*The AI updated the frontend Dashboard component to remove mocked data and implemented a `fetch()` call pointed directly to `http://localhost:3001/api/state`. Types were aligned, graceful error handling was added, and the backend server was started in the background.*
+
+### User - Prompt 7
+> Ecmascript file had an error: `ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component... There is dynamic error problem in the frontend please check and push the conversatation in the aiusage.md
+
+### AI - Response 7
+*The AI fixed the Server Component restriction error by declaring `"use client";` at the top of the Next.js `page.tsx` file, ensuring the lazy loaded dashboard properly rendered on the client side without hydration mismatches. The conversation log was updated accordingly.*
