@@ -24,6 +24,7 @@ export interface SystemStateSummary {
   unresolved: number;
   duplicates: number;
   conflicts: number;
+  rejected_submissions: number;
 }
 
 export interface PendingEvent {
@@ -75,6 +76,7 @@ export const EMPTY_SUMMARY: SystemStateSummary = {
   unresolved: 0,
   duplicates: 0,
   conflicts: 0,
+  rejected_submissions: 0,
 };
 
 export class ApiError extends Error {
@@ -171,6 +173,7 @@ export function normalizeState(raw: unknown): StateResponse {
       unresolved: num(s.unresolved),
       duplicates: num(s.duplicates),
       conflicts: num(s.conflicts),
+      rejected_submissions: num(s.rejected_submissions),
     },
     pending,
     exceptions,
@@ -185,9 +188,13 @@ function isAbortError(err: unknown): boolean {
 }
 
 export const api = {
-  getState: async (signal?: AbortSignal): Promise<StateResponse> => {
+  getState: async (signal?: AbortSignal, sourceId?: string): Promise<StateResponse> => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/state`, { cache: "no-store", signal });
+      const url = new URL(`${API_BASE_URL}/api/state`);
+      if (sourceId) {
+        url.searchParams.append("source_id", sourceId);
+      }
+      const res = await fetch(url.toString(), { cache: "no-store", signal });
       if (!res.ok) throw new ApiError("Failed to fetch state", res.status);
       return normalizeState(await res.json());
     } catch (err) {

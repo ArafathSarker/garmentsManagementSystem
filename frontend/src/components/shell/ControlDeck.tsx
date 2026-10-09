@@ -68,7 +68,7 @@ export default function ControlDeck() {
   const { toasts, push, dismiss } = useToasts();
 
   const state = useDerivedState();
-  const { connection, latency, lastSync, paused, isRefreshing, data, selected } = state;
+  const { connection, latency, lastSync, paused, isRefreshing, data, selected, sourceFilter } = state;
 
   const notify = useCallback(
     (message: string, tone: "success" | "error" | "info") => push(message, tone),
@@ -113,6 +113,8 @@ export default function ControlDeck() {
           lastSync={lastSync}
           paused={paused}
           isRefreshing={isRefreshing}
+          sourceFilter={sourceFilter}
+          onSourceFilterChange={actions.setSourceFilter}
           onRefresh={() => void actions.refresh()}
           onTogglePause={actions.togglePaused}
           onOpenSettings={() => setView("settings")}

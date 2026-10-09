@@ -9,22 +9,30 @@ export function Topbar({
   connection,
   latency,
   lastSync,
-  paused,
   isRefreshing,
+  sourceFilter,
+  onSourceFilterChange,
   onRefresh,
   onTogglePause,
   onOpenSettings,
 }: {
-  connection: ConnectionState;
   latency: number | null;
   lastSync: number | null;
   paused: boolean;
   isRefreshing: boolean;
+  sourceFilter: string | null;
+  onSourceFilterChange: (sourceId: string | null) => void;
   onRefresh: () => void;
   onTogglePause: () => void;
   onOpenSettings: () => void;
 }) {
   const elapsed = useElapsed(lastSync);
+  const [localFilter, setLocalFilter] = useState(sourceFilter || "");
+
+  // Update local input if remote changes
+  useEffect(() => {
+    setLocalFilter(sourceFilter || "");
+  }, [sourceFilter]);
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/8 bg-ink-950/80 backdrop-blur-xl">
@@ -49,6 +57,18 @@ export function Topbar({
           </span>
           <span className="h-3 w-px bg-white/10" />
           <span className="font-mono text-[11px] text-slate-400">{formatDuration(elapsed)}</span>
+        </div>
+
+        <div className="mr-2 flex items-center">
+          <input
+            type="text"
+            placeholder="Filter Source ID (e.g. LINE-01)"
+            value={localFilter}
+            onChange={(e) => setLocalFilter(e.target.value)}
+            onBlur={() => onSourceFilterChange(localFilter.trim() || null)}
+            onKeyDown={(e) => e.key === "Enter" && onSourceFilterChange(localFilter.trim() || null)}
+            className="w-48 rounded-xl bg-white/4 px-3 py-1.5 text-sm text-white placeholder-slate-500 outline-none ring-1 ring-white/8 transition-colors focus:bg-white/8 focus:ring-white/20 sm:w-56"
+          />
         </div>
 
         <button

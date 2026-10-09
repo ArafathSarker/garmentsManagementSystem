@@ -58,7 +58,7 @@ export default function OverviewView({
       {isBooting ? (
         <StatSkeletonGrid />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <StatCard
             label="Net Total"
             value={summary.net_total}
@@ -89,6 +89,12 @@ export default function OverviewView({
             tone="rose"
             active
             onClick={() => onNavigate("exceptions")}
+          />
+          <StatCard
+            label="Rejected"
+            value={summary.rejected_submissions}
+            hint="Submissions explicitly rejected"
+            tone="rose"
           />
         </div>
       )}

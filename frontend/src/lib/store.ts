@@ -26,6 +26,7 @@ interface FactorySnapshot {
   isRefreshing: boolean;
   selected: Set<string>;
   paused: boolean;
+  sourceFilter: string | null;
 }
 
 const POLL_MS = 5_000;
@@ -43,6 +44,7 @@ let snapshot: FactorySnapshot = {
   isRefreshing: false,
   selected: new Set<string>(),
   paused: false,
+  sourceFilter: null,
 };
 
 const listeners = new Set<() => void>();
@@ -73,7 +75,7 @@ async function refresh(reason: "poll" | "manual" = "poll"): Promise<void> {
   const startedAt = performance.now();
 
   try {
-    const data = await api.getState();
+    const data = await api.getState(undefined, snapshot.sourceFilter || undefined);
     const latency = Math.round(performance.now() - startedAt);
 
     // If a newer refresh was started while we were waiting, discard this result.
@@ -209,6 +211,13 @@ async function acknowledge(ids: string[]): Promise<{ ok: boolean; message: strin
   }
 }
 
+function setSourceFilter(sourceFilter: string | null) {
+  if (snapshot.sourceFilter === sourceFilter) return;
+  snapshot = { ...snapshot, sourceFilter };
+  emit();
+  void refresh("manual");
+}
+
 export const actions = {
   refresh: () => refresh("manual"),
   acknowledge,
@@ -217,6 +226,7 @@ export const actions = {
   setSelection,
   clearSelection,
   setPolling,
+  setSourceFilter,
 };
 
 /* ------------------------------------------------------------------ */

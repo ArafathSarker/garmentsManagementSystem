@@ -24,6 +24,15 @@ export async function processEventsService(events: any[]) {
                 throw new Error("Invalid type");
             }
 
+            if (type === 'COUNT') {
+                if (quantity == null || !Number.isInteger(quantity) || quantity < 1 || quantity > 500) {
+                    if (quantity != null && quantity > 500) {
+                        throw new Error("Quantity exceeds 500 limit");
+                    }
+                    throw new Error("Invalid quantity for COUNT");
+                }
+            }
+
             // Begin isolated transaction for this event
             await pool.query('BEGIN');
 
