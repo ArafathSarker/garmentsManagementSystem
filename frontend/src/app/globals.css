@@ -1,26 +1,193 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-ink-950: #05070d;
+  --color-ink-900: #090c15;
+  --color-ink-850: #0d111d;
+  --color-ink-800: #121828;
+  --color-ink-700: #1b2338;
+  --color-ink-600: #263049;
+
+  --color-neon-300: #7ef7d3;
+  --color-neon-400: #34e3b0;
+  --color-neon-500: #12c48c;
+
+  --color-violet-glow: #8b5cf6;
+  --color-cyan-glow: #22d3ee;
+
+  --radius-xl2: 1.25rem;
+
+  --animate-drift: drift 22s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-sheen: sheen 2.2s linear infinite;
+  --animate-rise: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-tick: tick 1.6s ease-in-out infinite;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, -6%, 0) scale(1.12);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.85;
+  }
+  80%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@keyframes sheen {
+  0% {
+    background-position: -180% 0;
+  }
+  100% {
+    background-position: 180% 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes tick {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  * {
+    border-color: --alpha(var(--color-white) / 8%);
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--color-ink-950);
+    color: var(--color-slate-200);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: --alpha(var(--color-neon-400) / 30%);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid --alpha(var(--color-neon-400) / 70%);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: --alpha(var(--color-slate-500) / 30%);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: --alpha(var(--color-neon-400) / 45%);
+    background-clip: content-box;
+  }
+}
+
+@utility grid-backdrop {
+  background-image:
+    linear-gradient(to right, --alpha(var(--color-white) / 4%) 1px, transparent 1px),
+    linear-gradient(to bottom, --alpha(var(--color-white) / 4%) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+@utility glass {
+  background: linear-gradient(
+    160deg,
+    --alpha(var(--color-white) / 7%) 0%,
+    --alpha(var(--color-white) / 2%) 45%,
+    --alpha(var(--color-white) / 4%) 100%
+  );
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid --alpha(var(--color-white) / 9%);
+  box-shadow:
+    inset 0 1px 0 0 --alpha(var(--color-white) / 8%),
+    0 24px 60px -32px rgb(0 0 0 / 0.9);
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-white) 0%,
+    var(--color-neon-300) 45%,
+    #a5b4fc 100%
+  );
+  background-clip: text;
+  color: transparent;
+}
+
+@utility skeleton {
+  background-image: linear-gradient(
+    100deg,
+    transparent 20%,
+    --alpha(var(--color-white) / 9%) 45%,
+    transparent 70%
+  );
+  background-size: 220% 100%;
+  animation: var(--animate-sheen);
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
